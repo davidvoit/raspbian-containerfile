@@ -1,0 +1,2 @@
+# sys_admin makes this a privileged container, debootstrap use mknod + mount /proc, /sys, /dev into chroot
+sudo podman build --cap-add=cap_sys_admin -t rasbpian:latest container/

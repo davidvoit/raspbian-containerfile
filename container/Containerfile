@@ -1,0 +1,14 @@
+# needs root container for mknod !
+
+FROM arm32v6/alpine AS bootstrap
+
+RUN apk add perl debootstrap bash && \
+    gpg --keyserver keys.gnupg.net --recv-key 9165938D90FDDD2E && \
+    gpg --export > /raspbian.gpg && \
+    wget -O docker-debootstrap https://raw.githubusercontent.com/moby/moby/master/contrib/mkimage/debootstrap && \
+    chmod +x docker-debootstrap
+RUN ./docker-debootstrap /chroot --arch=armhf --keyring=/raspbian.gpg --variant=minbase buster http://mirror.de.leaseweb.net/raspbian/raspbian && rm -rf /chroot/dev/*
+
+FROM scratch
+COPY --from=bootstrap /chroot/ .
+CMD ["/bin/bash"]
